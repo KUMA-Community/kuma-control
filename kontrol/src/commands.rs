@@ -1,0 +1,9 @@
+pub const INIT: &str = "init";
+pub const ASSETS: &str = "assets";
+pub const EVENTS: &str = "events";
+pub const RESOURCES: &str = "resources";
+pub const SERVICES: &str = "services";
+pub const TENANTS: &str = "tenants";
+pub const HELP: &str = "help";
+pub const LIST: &str = "ls";
+pub const IMPORT: &str = "import";

@@ -1,0 +1,13 @@
+[package]
+name = "kontrol"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+colored = { workspace = true }
+anyhow = { workspace = true }
+http = { workspace = true }
+services = { workspace = true }
+config = { workspace = true }
+assets = { workspace = true }
+tenants = { workspace = true }
