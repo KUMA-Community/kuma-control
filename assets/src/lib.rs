@@ -89,7 +89,7 @@ impl Client {
                     .strip_prefix("ipAddresses=")
                     .unwrap()
                     .split(",")
-                    .map(|v| serde_json::Value::String(v.to_string()))
+                    .map(|v| v.to_string().into())
                     .collect();
                 asset.as_mut().unwrap().as_object_mut().unwrap().insert(
                     "ipAddresses".to_string(),
@@ -100,7 +100,7 @@ impl Client {
                     .strip_prefix("fqdn=")
                     .unwrap()
                     .split(",")
-                    .map(|v| serde_json::Value::String(v.to_string()))
+                    .map(|v| v.to_string().into())
                     .collect();
                 asset
                     .as_mut()
@@ -141,16 +141,15 @@ impl Client {
             }
 
             serde_json::json!({
-                "tenantID": tenant_id.unwrap(),
+                "tenantID": tenant_id,
                 "assets": data,
             })
         } else if data.is_object() {
             if data.as_object().unwrap().get("assets").is_some() {
                 if let Some(tenant_id) = tenant_id {
-                    data.as_object_mut().unwrap().insert(
-                        "tenantID".to_string(),
-                        serde_json::Value::String(tenant_id.to_string()),
-                    );
+                    data.as_object_mut()
+                        .unwrap()
+                        .insert("tenantID".to_string(), tenant_id.into());
                 }
                 data
             } else {
@@ -159,7 +158,7 @@ impl Client {
                 }
 
                 serde_json::json!({
-                    "tenantID": tenant_id.unwrap(),
+                    "tenantID": tenant_id,
                     "assets": serde_json::Value::Array(vec![data]),
                 })
             }
