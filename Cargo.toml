@@ -9,6 +9,7 @@ path = "kontrol/src/main.rs"
 
 [workspace]
 members = [
+    "api",
     "config",
     "http",
     "services",
@@ -25,6 +26,7 @@ rpassword = { version = "7.3" }
 #
 # local crates
 #
+api = { path = "api" }
 assets = { path = "assets" }
 config = { path = "config" }
 http = { path = "http" }
@@ -38,4 +40,5 @@ services = { workspace = true }
 anyhow = { workspace = true }
 config = { workspace = true }
 assets = { workspace = true }
+api = { workspace = true }
 tenants = { workspace = true }

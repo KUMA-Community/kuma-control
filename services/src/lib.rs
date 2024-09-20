@@ -10,13 +10,17 @@ impl Client {
     }
 
     pub fn list(&self) -> anyhow::Result<()> {
-        let response = self.client.get("services")?;
-        let services = response.as_array().unwrap();
-        if !services.is_empty() {
-            println!(
-                "{0: <20} {1: <10} {2: <38} {3: <15} {4: <8} {5: <10}",
-                "NAME", "KIND", "ID", "FQDN", "STATUS", "TENANT"
-            );
+        let pagination = api::PaginationRequest::new(self.client.clone(), "services");
+        let mut print_header = true;
+
+        for page in pagination {
+            let services = page?;
+
+            if print_header {
+                println!("{0: <38} {1: <50} FQDN", "ID", "NAME");
+                print_header = false;
+            }
+
             for service in services {
                 let service = service.as_object().unwrap();
                 let id = service.get("id").unwrap().as_str().unwrap();
@@ -36,6 +40,7 @@ impl Client {
                 );
             }
         }
+
         Ok(())
     }
 }

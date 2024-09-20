@@ -1,5 +1,3 @@
-use std::io::prelude::*;
-
 pub const NOT_SPECIFIED_TENANT_MSG: &str =
     "tenant is not specified, please specify it like this 'kc assets import tenant=Main ...'";
 pub struct Client {
@@ -12,38 +10,35 @@ impl Client {
     }
 
     pub fn list(&self) -> anyhow::Result<()> {
-        let response = self.client.get_response("assets?stream=")?;
-        let buffered_reader = std::io::BufReader::new(response);
+        let pagination = api::PaginationRequest::new(self.client.clone(), "assets");
         let mut print_header = true;
 
-        for line in buffered_reader.lines() {
-            let line = line.map_err(|e| anyhow::anyhow!("failed to read line: {}", e))?;
-            let asset: serde_json::Value = serde_json::from_str(line.trim_end())
-                .map_err(|e| anyhow::anyhow!("failed to deserialize json: {}", e))?;
-            let asset = asset.as_object().unwrap();
-            if asset.get("id").is_none() && asset.get("fqdn").is_none() {
-                anyhow::bail!("{}", line);
-            }
-
-            let id = asset.get("id").unwrap().as_str().unwrap();
-            let fqdn = asset.get("fqdn").unwrap().as_array().unwrap();
-            let name = asset.get("name").unwrap().as_str().unwrap();
+        for page in pagination {
+            let assets = page?;
 
             if print_header {
                 println!("{0: <38} {1: <50} FQDN", "ID", "NAME");
                 print_header = false;
             }
 
-            let fqdns = if fqdn.is_empty() {
-                "-".to_string()
-            } else {
-                fqdn.iter()
-                    .map(|a| a.as_str().unwrap())
-                    .collect::<Vec<&str>>()
-                    .join(", ")
-            };
+            for asset in assets {
+                let asset = asset.as_object().unwrap();
+                let id = asset.get("id").unwrap().as_str().unwrap();
+                let fqdns = asset.get("fqdn").unwrap().as_array().unwrap();
+                let name = asset.get("name").unwrap().as_str().unwrap();
 
-            println!("{0: <38} {1: <50} {2}", id, name, fqdns);
+                let fqdns = if fqdns.is_empty() {
+                    "-".to_string()
+                } else {
+                    fqdns
+                        .iter()
+                        .map(|a| a.as_str().unwrap())
+                        .collect::<Vec<&str>>()
+                        .join(", ")
+                };
+
+                println!("{0: <38} {1: <50} {2}", id, name, fqdns);
+            }
         }
 
         Ok(())
