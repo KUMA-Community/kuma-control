@@ -1,6 +1,7 @@
 use crate::commands::*;
 use colored::Colorize;
 
+const TITLE: &str = "KUMA command line interface";
 const INIT_SHORT_HELP: &str =
     "Initialize config. It is recommented to run it before using kuma-control";
 
@@ -14,14 +15,28 @@ pub fn print_help_init_and_exit() {
     std::process::exit(1);
 }
 
+pub fn print_help_tenants_and_exit() {
+    help_tenants();
+    std::process::exit(1);
+}
+
+pub fn print_help_services_and_exit() {
+    help_services();
+    std::process::exit(1);
+}
+
 pub fn print_help_assets_and_exit() {
     help_assets();
     std::process::exit(1);
 }
 
-pub fn help() {
-    println!("KUMA command line interface");
+fn print_title() {
+    println!("{}", TITLE);
     println!();
+}
+
+pub fn help() {
+    print_title();
 
     println!(
         "{} {} <COMMAND>",
@@ -45,20 +60,33 @@ pub fn help() {
 }
 
 pub fn help_init() {
-    println!("KUMA command line interface");
-    println!();
+    print_title();
 
     println!("{}\t{}", INIT, INIT_SHORT_HELP);
 }
 
+pub fn help_tenants() {
+    print_title();
+
+    println_subcommand_usage(TENANTS);
+
+    println!("  {}\t\tPrint {} list", LIST, TENANTS);
+}
+
+pub fn help_services() {
+    print_title();
+
+    println_subcommand_usage(SERVICES);
+
+    println!("  {}\t\tPrint {} list", LIST, SERVICES);
+}
+
 pub fn help_assets() {
-    println!("KUMA command line interface");
-    println!();
+    print_title();
 
-    println!("{} {} <subcommands>", title("Usage:"), ASSETS);
-    println!();
+    println_subcommand_usage(ASSETS);
 
-    println!("  {}\t\tPrint assets list", LIST);
+    println!("  {}\t\tPrint {} list", LIST, ASSETS);
     println!(
         "  {}\tImport assets list. It reads from stdin json format or use paramaters from command line.\n\t\t\
             For example, next command creates one asset {}\n\t\t\
@@ -68,6 +96,11 @@ pub fn help_assets() {
             .bold()
             .bright_white(),
     );
+}
+
+fn println_subcommand_usage(name: &str) {
+    println!("{} {} <subcommands>", title("Usage:"), name);
+    println!();
 }
 
 fn title(s: &str) -> colored::ColoredString {

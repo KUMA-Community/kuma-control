@@ -12,17 +12,11 @@ fn main() -> Result<(), anyhow::Error> {
 
     let command = std::env::args().nth(1).unwrap();
 
-    match command.as_str() {
-        INIT => {
-            return config::Config::interactive_init();
-        }
-        HELP => {
-            help::print_help_and_exit();
-        }
-        _ => {}
+    if command == INIT && command.len() == 2 {
+        return config::Config::interactive_init();
     }
 
-    if std::env::args().count() <= 2 {
+    if std::env::args().len() <= 2 {
         help::print_help_and_exit();
     }
 
@@ -130,8 +124,12 @@ fn help(subcommand: &str) -> anyhow::Result<()> {
         }
         EVENTS => {}
         RESOURCES => {}
-        SERVICES => {}
-        TENANTS => {}
+        SERVICES => {
+            help::print_help_services_and_exit();
+        }
+        TENANTS => {
+            help::print_help_tenants_and_exit();
+        }
         _ => {
             anyhow::bail!("unknown subcommand '{}'", subcommand);
         }
