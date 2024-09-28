@@ -10,14 +10,14 @@ impl Client {
     }
 
     pub fn list(&self) -> anyhow::Result<()> {
-        let pagination = api::PaginationRequest::new(self.client.clone(), "assets?preview=");
+        let pagination = api::PaginationRequest::new(self.client.clone(), "assets?preview");
         let mut print_header = true;
 
         for page in pagination {
             let assets = page?;
 
             if print_header {
-                println!("{0: <38} {1: <15} {2: <40}  FQDN", "ID", "TENANT", "NAME");
+                println!("{0: <38} {1: <15} {2: <50}  FQDN", "ID", "TENANT", "NAME");
                 print_header = false;
             }
 
@@ -39,7 +39,7 @@ impl Client {
                 };
 
                 println!(
-                    "{0: <38} {1: <15} {2: <40} {3}",
+                    "{0: <38} {1: <15} {2: <50} {3}",
                     id, tenant_name, name, fqdns
                 );
             }
